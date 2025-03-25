@@ -13,8 +13,13 @@ const App = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setPersons([...persons, { name: newName }]);
-    newName('');
+    const isRepeated = Boolean(persons.find(person => person.name == newName));
+    console.log(isRepeated)
+    !isRepeated ?
+      setPersons([...persons, { name: newName }])
+    :
+      alert(`${newName} is already added to phonebook`)
+    setNewName('')
   }
 
   return (
