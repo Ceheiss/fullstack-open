@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react'
-import axios from 'axios';
+import { useState, useEffect } from 'react';
 import { PersonForm } from './components/PersonForm';
 import { Filter } from './components/Filter';
 import { Persons } from './components/Persons';
+import phonebookService from './services/phonebook';
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -11,12 +11,9 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('');
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log("response", response);
-        setPersons(response.data);
-      })
+    phonebookService
+      .getPersons()
+      .then(response => setPersons(response))
   },[])
 
   const handleInputNameChange = (event) => {
@@ -37,9 +34,7 @@ const App = () => {
     const newPerson = { name: newName, number: newNumber };
     if (!isRepeated) {
       setPersons([...persons, newPerson]);
-      axios
-        .post('http://localhost:3001/persons', newPerson)
-        .then(response =>  console.log("Person added correctly: ", response));
+      phonebookService.createPerson(newPerson);
     } else {
       alert(`${newName} is already added to phonebook`);
     }
