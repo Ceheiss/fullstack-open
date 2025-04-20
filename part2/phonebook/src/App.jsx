@@ -34,12 +34,17 @@ const App = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     const isRepeated = Boolean(persons.find(person => person.name == newName));
-    !isRepeated ?
-      setPersons([...persons, { name: newName, number: newNumber }])
-    :
-      alert(`${newName} is already added to phonebook`)
-    setNewName('')
-    setNewNumber('')
+    const newPerson = { name: newName, number: newNumber };
+    if (!isRepeated) {
+      setPersons([...persons, newPerson]);
+      axios
+        .post('http://localhost:3001/persons', newPerson)
+        .then(response =>  console.log("Person added correctly: ", response));
+    } else {
+      alert(`${newName} is already added to phonebook`);
+    }
+    setNewName('');
+    setNewNumber('');
   }
 
   const filteredPersons = persons.filter(person => person.name.toUpperCase().includes(filteredName.toUpperCase()));
