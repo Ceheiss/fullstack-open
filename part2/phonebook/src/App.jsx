@@ -31,7 +31,8 @@ const App = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     const isRepeated = Boolean(persons.find(person => person.name == newName));
-    const newPerson = { name: newName, number: newNumber };
+    const id = persons.length + newName.split("")[0] + Date.now();
+    const newPerson = { name: newName, number: newNumber, id };
     if (!isRepeated) {
       setPersons([...persons, newPerson]);
       phonebookService.createPerson(newPerson);
@@ -40,6 +41,16 @@ const App = () => {
     }
     setNewName('');
     setNewNumber('');
+  }
+
+  const handleDelete = (person) => { 
+    if (window.confirm(`Do you want to delete ${person.name}?`)) {
+      phonebookService.deletePerson(person.id);
+      const afterDeletion = persons.filter((p) => p.id !== person.id);
+      setPersons(afterDeletion);
+    } else {
+      alert("Person not deleted!")
+    }
   }
 
   const filteredPersons = persons.filter(person => person.name.toUpperCase().includes(filteredName.toUpperCase()));
@@ -56,7 +67,7 @@ const App = () => {
         onSubmit={handleSubmit}
       />
       <h2>Numbers</h2>
-      <Persons filteredPersons={filteredPersons} />
+      <Persons filteredPersons={filteredPersons} handleDelete={handleDelete} />
     </div>
   )
 }

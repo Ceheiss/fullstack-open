@@ -18,8 +18,14 @@ const createPerson = (newPerson) => {
   return request.then(response =>  console.log("Person added correctly: ", response));
 }
 
+const deletePerson = (personId) => {
+  const request = axios.delete(`${baseUrl}/${personId}`);
+  return request.then(response =>  console.log("Person deleted correctly: ", response));
+}
+
 
 export default { 
   getPersons,
-  createPerson
+  createPerson,
+  deletePerson
 }
