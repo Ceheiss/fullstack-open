@@ -30,14 +30,24 @@ const App = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const isRepeated = Boolean(persons.find(person => person.name == newName));
+    const person = persons.find(person => person.name == newName);
+    const isRepeated = Boolean(person);
     const id = persons.length + newName.split("")[0] + Date.now();
     const newPerson = { name: newName, number: newNumber, id };
     if (!isRepeated) {
       setPersons([...persons, newPerson]);
       phonebookService.createPerson(newPerson);
     } else {
-      alert(`${newName} is already added to phonebook`);
+      if (window.confirm(`${newName} is already in your phonebook, do you want to replace the old number with the new one?`)) {
+        const filteredPersons = persons.map((p) => {
+          if (p.name === newName) {
+            return {...p, number: newNumber}
+          }
+          return p;
+        });
+        setPersons(filteredPersons);
+        phonebookService.updatePerson(person.id, newPerson);
+      }
     }
     setNewName('');
     setNewNumber('');
