@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
+import './index.css';
 import { PersonForm } from './components/PersonForm';
 import { Filter } from './components/Filter';
 import { Persons } from './components/Persons';
+import { Notification } from './components/Notification';
 import phonebookService from './services/phonebook';
 
 const App = () => {
@@ -9,6 +11,7 @@ const App = () => {
   const [newName, setNewName] = useState('');
   const [filteredName, setFilteredName] = useState('');
   const [newNumber, setNewNumber] = useState('');
+  const [updateMessage, setUpdateMessage] = useState(null);
 
   useEffect(() => {
     phonebookService
@@ -37,6 +40,10 @@ const App = () => {
     if (!isRepeated) {
       setPersons([...persons, newPerson]);
       phonebookService.createPerson(newPerson);
+      setUpdateMessage(`${newName} was added to the list`);
+      setTimeout(() => {
+        setUpdateMessage(null)
+      }, 5000);
     } else {
       if (window.confirm(`${newName} is already in your phonebook, do you want to replace the old number with the new one?`)) {
         const filteredPersons = persons.map((p) => {
@@ -47,6 +54,10 @@ const App = () => {
         });
         setPersons(filteredPersons);
         phonebookService.updatePerson(person.id, newPerson);
+        setUpdateMessage(`${newName}'s number was updated`);
+        setTimeout(() => {
+          setUpdateMessage(null)
+        }, 5000);
       }
     }
     setNewName('');
@@ -68,6 +79,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={updateMessage} />
       <Filter value={filteredName} onChange={handleInputFilterChange} />
       <PersonForm 
         nameInputValue={newName}
