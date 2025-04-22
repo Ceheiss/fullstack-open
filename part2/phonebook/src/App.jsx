@@ -12,6 +12,7 @@ const App = () => {
   const [filteredName, setFilteredName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [updateMessage, setUpdateMessage] = useState(null);
+  const [messageType, setMessageType] = useState('default');
 
   useEffect(() => {
     phonebookService
@@ -46,18 +47,28 @@ const App = () => {
       }, 5000);
     } else {
       if (window.confirm(`${newName} is already in your phonebook, do you want to replace the old number with the new one?`)) {
-        const filteredPersons = persons.map((p) => {
-          if (p.name === newName) {
-            return {...p, number: newNumber}
-          }
-          return p;
-        });
-        setPersons(filteredPersons);
-        phonebookService.updatePerson(person.id, newPerson);
-        setUpdateMessage(`${newName}'s number was updated`);
-        setTimeout(() => {
-          setUpdateMessage(null)
-        }, 5000);
+        phonebookService.updatePerson(person.id, newPerson)
+          .then(() => {
+            const filteredPersons = persons.map((p) => {
+              if (p.name === newName) {
+                return {...p, number: newNumber}
+              }
+              return p;
+            });
+            setPersons(filteredPersons);
+            setMessageType('default');
+            setUpdateMessage(`${newName}'s number was updated`);
+            setTimeout(() => {
+              setUpdateMessage(null)
+            }, 5000);
+          })
+          .catch(err => {
+            setMessageType('error');
+            setUpdateMessage(`Information of ${newName} was already removed from the server`);
+            setTimeout(() => {
+              setUpdateMessage(null)
+            }, 5000);
+          })
       }
     }
     setNewName('');
@@ -79,7 +90,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={updateMessage} />
+      <Notification message={updateMessage} type={messageType} />
       <Filter value={filteredName} onChange={handleInputFilterChange} />
       <PersonForm 
         nameInputValue={newName}
