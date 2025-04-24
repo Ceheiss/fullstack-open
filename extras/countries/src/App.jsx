@@ -4,6 +4,7 @@ import './index.css';
 
 
 const App = () => {
+  const [initialData, setInitialData] = useState([]);
   const [countries, setCountries] = useState([]);
   const [searchedCountry, setSearchedCountry] = useState('');
   const [selectedCountry, setSelectedCountry] = useState(null);
@@ -11,13 +12,15 @@ const App = () => {
   useEffect(() => {
     getAll()
       .then((data) => {
-        const filteredCountries = data.map(c => c.name.common.toLowerCase()).filter(c => c.includes(searchedCountry.toLowerCase()));
-        setCountries(filteredCountries);
-        console.log("countries", countries);
+        setInitialData(data)
       });
-    if (countries.length === 1) {
-      console.log("uno ctm", countries[0]);
-      getUniqueCountry(countries[0])
+  }, []);
+
+  useEffect(() => {
+    const filteredCountries = initialData.map(c => c.name.common.toLowerCase()).filter(c => c.includes(searchedCountry.toLowerCase()));
+    setCountries(filteredCountries);
+    if (filteredCountries.length === 1) {
+      getUniqueCountry(filteredCountries[0])
         .then((data) => {
           setSelectedCountry({
             name: data.name.common,
@@ -27,7 +30,6 @@ const App = () => {
             flagSrc: data.flags.png 
           });
         });
-      console.log("selectedCountry: ", selectedCountry)
     }
   }, [searchedCountry]);
 
@@ -41,7 +43,18 @@ const App = () => {
       find countries <input onChange={handleChange} value={searchedCountry}></input>
       <ul>{ countries.length > 1 && countries.length < 10 ?
             countries.map(c => <li key={c}>{c}</li>) : 
-            countries.length === 1 ? <h1>{countries[0]}</h1> :
+            countries.length === 1 && selectedCountry ? <>
+              {console.log("adentro", selectedCountry)}
+              <h1>{selectedCountry.name}</h1>
+              <p>Capital {selectedCountry.capital}</p>
+              <p>Area {selectedCountry.area}</p>
+              <h3>Languages</h3>
+              <ul>
+                {Object.values(selectedCountry.languages)
+                  .map(lang => <li key={lang}>{lang}</li>)}
+              </ul>
+              <img src={selectedCountry.flagSrc} alt={`Flag of ${selectedCountry.name}`} />
+            </>:
             "Too many matches, specify anothe filter" }
       </ul>
     </div>
