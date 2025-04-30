@@ -3,6 +3,8 @@ const app = express();
 
 const port = 3001;
 
+app.use(express.json());
+
 let persons = [
   { 
     "id": "1",
@@ -49,6 +51,28 @@ app.delete('/api/persons/:id', (req, res) => {
   const id = req.params.id;
   persons = persons.filter(person => person.id !== id);
   res.status(204).end()
+});
+
+app.post('/api/persons', (req, res) => {
+  console.log("aerstame", req.body)
+  const name = req.body.name;
+  const number = req.body.number;
+  const id = Math.random().toString();
+
+  if (!req.body.name || !req.body.number) {
+    return response.status(400).json({ 
+      error: 'content missing' 
+    })
+  }
+
+  const person = {
+    name,
+    number,
+    id
+  }
+
+  persons = persons.concat(person)
+  res.json(person) 
 });
 
 app.listen(port, () => {
