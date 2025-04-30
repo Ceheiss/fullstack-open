@@ -1,5 +1,8 @@
 const express = require('express');
+const morgan = require('morgan');
+
 const app = express();
+app.use(morgan('tiny'));
 
 const port = 3001;
 
@@ -67,7 +70,7 @@ app.post('/api/persons', (req, res) => {
   for (p of persons) {
     if (p.name === name) {
       return res.status(400).json({
-        error: 'no duplicate names'
+        error: 'name must be unique'
       })
     }
   }
