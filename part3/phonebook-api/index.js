@@ -54,15 +54,22 @@ app.delete('/api/persons/:id', (req, res) => {
 });
 
 app.post('/api/persons', (req, res) => {
-  console.log("aerstame", req.body)
   const name = req.body.name;
   const number = req.body.number;
   const id = Math.random().toString();
 
   if (!req.body.name || !req.body.number) {
-    return response.status(400).json({ 
+    return res.status(400).json({ 
       error: 'content missing' 
     })
+  }
+
+  for (p of persons) {
+    if (p.name === name) {
+      return res.status(400).json({
+        error: 'no duplicate names'
+      })
+    }
   }
 
   const person = {
