@@ -2,7 +2,18 @@ const express = require('express');
 const morgan = require('morgan');
 
 const app = express();
-app.use(morgan('tiny'));
+
+
+morgan.token('content', function (req, res) {
+  return JSON.stringify(req.body)
+})
+
+app.use(morgan(":method :url :status :res[content-length] - :response-time ms :content", {
+  skip: function (req, res) { 
+    return req.method !== 'POST'
+  }
+}));
+// output example: POST /api/persons 200 69 - 19.267 ms {"name":"Arto Hellasion","number":"324343"}
 
 const port = 3001;
 
