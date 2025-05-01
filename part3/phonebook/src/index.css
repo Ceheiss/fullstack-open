@@ -1,0 +1,19 @@
+.notification {
+  font-size: 20px;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.default {
+  color: darkgreen;
+  background: lightgreen;
+  border: 5px solid darkgreen;
+}
+
+
+.error {
+  color: darkred;
+  background: palevioletred;
+  border: 5px solid darkred;
+}

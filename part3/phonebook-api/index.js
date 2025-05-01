@@ -1,12 +1,15 @@
 const express = require('express');
 const morgan = require('morgan');
+const cors = require('cors')
 
 const app = express();
 
+app.use(cors());
+app.use(express.json());
 
 morgan.token('content', function (req, res) {
-  return JSON.stringify(req.body)
-})
+  return JSON.stringify({"name": req.body.name, "number": req.body.number})
+});
 
 app.use(morgan(":method :url :status :res[content-length] - :response-time ms :content", {
   skip: function (req, res) { 
@@ -17,7 +20,7 @@ app.use(morgan(":method :url :status :res[content-length] - :response-time ms :c
 
 const port = 3001;
 
-app.use(express.json());
+
 
 let persons = [
   { 
@@ -70,7 +73,7 @@ app.delete('/api/persons/:id', (req, res) => {
 app.post('/api/persons', (req, res) => {
   const name = req.body.name;
   const number = req.body.number;
-  const id = Math.random().toString();
+  const id = Math.floor(Math.random() * 10000000).toString();
 
   if (!req.body.name || !req.body.number) {
     return res.status(400).json({ 
@@ -91,7 +94,7 @@ app.post('/api/persons', (req, res) => {
     number,
     id
   }
-
+  
   persons = persons.concat(person)
   res.json(person) 
 });
