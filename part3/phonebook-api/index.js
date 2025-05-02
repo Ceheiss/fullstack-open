@@ -18,7 +18,7 @@ app.use(morgan(":method :url :status :res[content-length] - :response-time ms :c
 }));
 // output example: POST /api/persons 200 69 - 19.267 ms {"name":"Arto Hellasion","number":"324343"}
 
-const port = 3001;
+const PORT = process.env.PORT || 3001
 
 
 
@@ -94,11 +94,11 @@ app.post('/api/persons', (req, res) => {
     number,
     id
   }
-  
+
   persons = persons.concat(person)
   res.json(person) 
 });
 
-app.listen(port, () => {
-  console.log(`App Running on port ${port}`)
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
 })
